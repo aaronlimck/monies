@@ -9,7 +9,7 @@
 
 ## Introduction
 
-Moolah, your solution for seamless finance management. Say goodbye to spreadsheet struggles and hello to effortless tracking across multiple bank accounts. With Moolah, gain a comprehensive overview of your finances in one streamlined platform.
+Moolah, your solution for seamless finance management. Designed to help individuals take control of their finances without the hassle of traditional spreadsheets. With Moolah, gain a comprehensive overview of your finances in one streamlined platform.
 
 This project uses the following technologies:
 
