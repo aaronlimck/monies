@@ -1,5 +1,7 @@
+import { EmptyPlaceholder } from "@/components/common/EmptyPlaceholder";
 import MainNavTabs from "@/components/navigation/MainNavTabs";
 import Navbar from "@/components/navigation/Navbar";
+import Image from "next/image";
 
 export default function BudgetsPage() {
   return (
@@ -11,6 +13,20 @@ export default function BudgetsPage() {
 
       <main className="container space-y-6 py-6">
         <h1 className="text-2xl font-semibold">Budgets</h1>
+
+        <EmptyPlaceholder>
+          <Image
+            src="/maintenance.png"
+            width={160}
+            height={160}
+            alt="maintenance"
+            unoptimized
+          />
+          <EmptyPlaceholder.Title>Budget Coming Soon</EmptyPlaceholder.Title>
+          <EmptyPlaceholder.Description>
+            This feature is not available yet. Stay tuned!
+          </EmptyPlaceholder.Description>
+        </EmptyPlaceholder>
       </main>
     </div>
   );
