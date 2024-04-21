@@ -36,16 +36,17 @@ export default function Home() {
         </div>
       </section>
 
-      {/* <section className="container w-full pb-8 md:mb-12 lg:mb-20">
-        <div className="mx-auto flex max-w-xl flex-col space-y-8 space-y-reverse md:max-w-none md:flex-row md:space-x-8 md:space-y-0 lg:space-x-16 xl:space-x-20">
+      <section className="container relative w-full pb-8 md:mb-12 lg:mb-32">
+        <div className="flex flex-col-reverse overflow-hidden lg:flex-row">
           <div className="w-full">
             <h2 className="pb-3 text-4xl font-bold text-primary/80">
-              Reduce Alert Noise
+              Enough is enough
             </h2>
             <p className="mb-9 text-muted-foreground">
-              Reduce the noise in your Slack workspace by consolidating all your
-              event data into one place, filtering alerts by relevance, and
-              customizing your alert settings to suit your needs.
+              With Moolah, we equip you with the tools to effortlessly
+              consolidate all your transactions. Gain detailed insights into
+              your spending habits and receive alerts for any unusual
+              transactions.
             </p>
 
             <dl className="grid grid-cols-1 gap-5">
@@ -53,45 +54,64 @@ export default function Home() {
                 <div className="mb-1 flex items-center space-x-2">
                   <HandCoins size={16} />
                   <h3 className="font-medium text-primary/80">
-                    Track your expenses
+                    Track your expenses and income
                   </h3>
                 </div>
                 <p className="text-left text-sm text-muted-foreground">
-                  Get all your event data in one place to reduce alert noise
+                  Simply add transactions with ease, whether it&apos;s a
+                  purchase or income received.
                 </p>
               </div>
 
               <div>
                 <div className="mb-1 flex items-center space-x-2">
                   <FileUpIcon size={16} />
-                  <h3 className="font-medium text-primary/80">
-                    Import Transactions
-                  </h3>
+                  <div className="flex items-center gap-2">
+                    <h3 className="font-medium text-primary/80">
+                      Import Transactions
+                    </h3>
+                    <span className="h-fit rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-800 dark:bg-gray-700 dark:text-gray-300">
+                      Coming Soon
+                    </span>
+                  </div>
                 </div>
                 <p className="text-left text-sm text-muted-foreground">
-                  Get all your event data in one place to reduce alert noise
+                  Effortlessly import CSV transactions to your account with just
+                  a few clicks.
                 </p>
               </div>
 
               <div>
                 <div className="mb-1 flex items-center space-x-2">
                   <SirenIcon size={16} />
-                  <h3 className="font-medium text-primary/80">
-                    Track your expenses
-                  </h3>
+                  <div className="flex items-center gap-2">
+                    <h3 className="font-medium text-primary/80">
+                      Alert for Unusual Transactions
+                    </h3>
+                    <span className="h-fit rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-800 dark:bg-gray-700 dark:text-gray-300">
+                      Coming Soon
+                    </span>
+                  </div>
                 </div>
                 <p className="text-left text-sm text-muted-foreground">
-                  Get all your event data in one place to reduce alert noise
+                  Get alerts for any suspicious or unusual transactions.
                 </p>
               </div>
             </dl>
           </div>
 
-          <div className="w-full">
-            <div className="h-[600px] rounded-xl border border-white/10"></div>
+          <div className="mb-12 w-full lg:mb-0 lg:ml-16">
+            <Image
+              className="top-0 mx-auto rounded-xl border dark:border-white/10 lg:absolute"
+              src="/images/transactions_screenshot.png"
+              width={800}
+              height={600}
+              alt=""
+            />
+            {/* <div className="rounded-xl border border-white/10"></div> */}
           </div>
         </div>
-      </section> */}
+      </section>
     </main>
   );
 }
