@@ -1,6 +1,7 @@
 "use client";
 import { signIn } from "next-auth/react";
 import { Button } from "@/components/ui/button";
+import GoogleIcon from "./GoogleIcon";
 
 export default function ContinueWithSocials({
   callbackUrl,
@@ -16,6 +17,7 @@ export default function ContinueWithSocials({
       className="w-full space-x-2 font-medium"
       onClick={() => handleClick("google")}
     >
+      <GoogleIcon className="h-4 w-4" />
       <span>Continue with Google</span>
     </Button>
   );
