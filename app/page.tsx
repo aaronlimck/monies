@@ -23,7 +23,7 @@ export default function Home() {
 
           <p className="max-w-xl text-balance text-center text-muted-foreground">
             Moolah provides you with the tools to manage your finance with ease.
-            It's simple, fast, and secure.
+            It&apos;s simple, fast, and secure.
           </p>
         </section>
       </div>
