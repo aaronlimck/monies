@@ -1,24 +1,25 @@
-<p align="center">
-	<h1 align="center"><b>Moolah</b></h1>
-</p>
+<div align="center">
+	<h1><b>Moolah</b></h1>
+	<p>Easier way to manage your finances.</p>
+</div>
 
-## App Architecture
+<div align="center">
+	<img src="public/images/transactions_screenshot.png">
+</div>
 
-- **Monorepo**
-- **React**
-- **TypeScript**
-- **Next.JS**: [Next.js](https://nextjs.org/)
+## Introduction
 
-## Design Libraries
+Moolah, your solution for seamless finance management. Say goodbye to spreadsheet struggles and hello to effortless tracking across multiple bank accounts. With Moolah, gain a comprehensive overview of your finances in one streamlined platform.
 
-- **Tailwind**: [Tailwindcss](https://tailwindcss.com/)
-- **ShadcnUI**: [ShadcnUI](https://ui.shadcn.com/)
+This project uses the following technologies:
 
-## Service
+- [**Next.js 14 App Router**](https://nextjs.org/) - The React Framework for the Web.
+- [**Next Authentication v4**](https://next-auth.js.org/) - Authentication for the Web.
+- [**Prisma**](https://prisma.io) - A next-generation Node.js and TypeScript ORM.
+- [**TailwindCSS**](https://tailwindcss.com) + [**shadcn/ui**](https://ui.shadcn.com) & [**Radix Primitives**](https://www.radix-ui.com) - Design System.
+- [**Lucide Icons**](https://lucide.dev) + [**svgl**](https://svgl.app) - Beautiful SVG icons & logos for the web.
+- [**Illustration**](https://www.pixeltrue.com/packs) - By Pixeltrue from Ouch!
 
-- **Authentication**: [NextAuth](https://next-auth.js.org/)
-- **Object Relation Mapping**: [Prisma](https://www.prisma.io/)
+## 🚀 Getting Started
 
-## Credits
-
-- **Illustration**: [Illustration by Pixeltrue from Ouch!](https://www.pixeltrue.com/packs)
+Coming Soon... (Working in Progress)
