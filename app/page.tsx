@@ -19,7 +19,7 @@ export default function Home() {
         </Link>
 
         <h1 className="max-w-2xl text-balance text-center text-[55px] font-bold leading-[60px] tracking-tight transition-all sm:text-6xl">
-          <span className="bg-gradient-to-r from-stone-500 to-stone-500 bg-clip-text text-transparent dark:from-neutral-300 dark:to-stone-400">
+          <span className="text-primary dark:bg-gradient-to-r  dark:from-neutral-300 dark:to-stone-400 dark:bg-clip-text dark:text-transparent">
             Manage your finance with ease
           </span>
         </h1>
@@ -39,7 +39,7 @@ export default function Home() {
       <section className="container relative w-full pb-8 md:mb-12 lg:mb-32">
         <div className="flex flex-col-reverse overflow-hidden lg:flex-row">
           <div className="w-full">
-            <h2 className="pb-3 text-4xl font-bold text-primary/80">
+            <h2 className="pb-3 text-4xl font-bold text-primary">
               Enough is enough
             </h2>
             <p className="mb-9 text-muted-foreground">
