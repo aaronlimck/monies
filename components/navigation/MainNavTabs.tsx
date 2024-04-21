@@ -3,9 +3,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const tabItems = [
-  { label: "Overview", href: "/overview", comingSoon: true },
+  { label: "Overview", href: "/overview" },
   { label: "Transactions", href: "/transactions" },
-  { label: "Budgets", href: "/budgets", comingSoon: true },
+  { label: "Budgets", href: "/budgets" },
   { label: "Accounts", href: "/accounts" },
 ];
 
@@ -25,11 +25,6 @@ export default function MainNavTabs() {
             }
           >
             {item.label}
-            {item.comingSoon && (
-              <span className="ml-1 text-nowrap rounded-full bg-secondary px-2.5 py-1 text-xs text-primary/50">
-                Coming Soon
-              </span>
-            )}
           </Link>
         </li>
       ))}
