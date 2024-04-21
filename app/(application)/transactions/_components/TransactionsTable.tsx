@@ -1,4 +1,5 @@
-import { Button } from "@/components/ui/button";
+// COMPONENTS
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
   TableBody,
@@ -13,112 +14,133 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { EllipsisIcon } from "lucide-react";
-import TransactionSheet from "./TransactionSheet";
+import TransactionTableActions from "./TransactionTableActions";
+import TransactionDetailSheet from "./TransactionDetailSheet";
 
-const mockTransactions = [
-  {
-    id: "1",
-    type: "expense",
-    date: "April 18, 2024",
-    description: "Netflix",
-    category: "Entertainment",
-    amount: "$9.90",
-  },
-  {
-    id: "2",
-    type: "expense",
-    date: "April 18, 2024",
-    description: "Telecom Bill",
-    category: "Utilities",
-    amount: "$18.00",
-  },
-  {
-    id: "3",
-    type: "expense",
-    date: "April 18, 2024",
-    description: "McDonalds",
-    category: "Food & Drinks",
-    amount: "$10.90",
-  },
-  {
-    id: "4",
-    type: "expense",
-    date: "April 18, 2024",
-    description: "Transfer to Savings",
-    category: "Transfer",
-    amount: "$250.00",
-  },
-  {
-    id: "5",
-    type: "income",
-    date: "April 18, 2024",
-    description: "Salary",
-    category: "Income",
-    amount: "$1,500.00",
-  },
-];
+// LIBRARY
+import { EXPENSE_CATEGORIES, INCOME_CATEGORIES } from "@/lib/categories";
+import { format } from "date-fns";
+import { Transaction as PrismaTransaction } from "@prisma/client";
 
-export default function TransactionsTable() {
+interface Transaction extends PrismaTransaction {
+  accountName: string;
+}
+
+export default function TransactionsTable({
+  transactions,
+}: {
+  transactions: Transaction[];
+}) {
+  return (
+    <>
+      <div className="rounded-md border">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="pl-4 md:w-[200px]">Date</TableHead>
+              <TableHead>Description</TableHead>
+              <TableHead>Category</TableHead>
+              <TableHead>Amount</TableHead>
+              <TableHead className="w-[100px]">
+                <span className="sr-only">Actions</span>
+              </TableHead>
+            </TableRow>
+          </TableHeader>
+
+          <TableBody>
+            {transactions.map((transaction: Transaction) => (
+              <TableRow key={transaction.id}>
+                <TableCell className="truncate pl-4 md:w-[200px]">
+                  {format(new Date(transaction.date), "MMMM dd, yyyy")}
+                </TableCell>
+                <TableCell>
+                  <div className="flex h-fit items-center">
+                    <TooltipProvider>
+                      <Tooltip delayDuration={150}>
+                        <TooltipTrigger>
+                          {transaction.type === "expense" && (
+                            <span className="me-3 flex h-2 w-2 rounded-full bg-red-500" />
+                          )}
+
+                          {transaction.type === "income" && (
+                            <span className="me-3 flex h-2 w-2 rounded-full bg-green-500" />
+                          )}
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          {transaction.type === "income" && "Income"}
+                          {transaction.type === "expense" && "Expense"}
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+
+                    <TransactionDetailSheet transaction={transaction}>
+                      <span className="cursor-pointer truncate hover:underline hover:underline-offset-2">
+                        {transaction.description}
+                      </span>
+                    </TransactionDetailSheet>
+                  </div>
+                </TableCell>
+                <TableCell>
+                  {transaction.type === "expense" &&
+                    EXPENSE_CATEGORIES[transaction.category]}
+
+                  {transaction.type === "income" &&
+                    INCOME_CATEGORIES[transaction.category]}
+                </TableCell>
+                <TableCell>${transaction.amount.toFixed(2)}</TableCell>
+                <TableCell className="w-[100px]">
+                  <TransactionTableActions transaction={transaction} />
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+    </>
+  );
+}
+
+TransactionsTable.Skeleton = function TransactionsTableSkeleton() {
   return (
     <div className="rounded-md border">
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="pl-3 md:w-[200px]">Date</TableHead>
+            <TableHead className="pl-4 md:w-[200px]">Date</TableHead>
             <TableHead>Description</TableHead>
             <TableHead>Category</TableHead>
             <TableHead>Amount</TableHead>
-            <TableHead className="sr-only">Actions</TableHead>
+            <TableHead className="w-[100px]">
+              <span className="sr-only">Actions</span>
+            </TableHead>
           </TableRow>
         </TableHeader>
 
         <TableBody>
-          {mockTransactions.map((transaction) => (
-            <TableRow key={transaction.id}>
-              <TableCell className="pl-3 md:w-[200px]">
-                {transaction.date}
-              </TableCell>
-              <TableCell>
-                <div className="flex items-center">
-                  <TooltipProvider>
-                    <Tooltip delayDuration={150}>
-                      <TooltipTrigger>
-                        {transaction.type === "expense" && (
-                          <span className="me-3 flex h-2 w-2 rounded-full bg-red-500" />
-                        )}
-
-                        {transaction.type === "income" && (
-                          <span className="me-3 flex h-2 w-2 rounded-full bg-green-500" />
-                        )}
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        {transaction.type === "income" ? "Income" : "Expense"}
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-
-                  <TransactionSheet
-                    title={transaction.description}
-                    viewTransaction={true}
-                  >
-                    <span className="cursor-pointer hover:underline hover:underline-offset-2">
-                      {transaction.description}
-                    </span>
-                  </TransactionSheet>
-                </div>
-              </TableCell>
-              <TableCell>{transaction.category}</TableCell>
-              <TableCell>{transaction.amount}</TableCell>
-              <TableCell>
-                <Button variant={"ghost"} className="h-fit p-1.5">
-                  <EllipsisIcon size={16} />
-                </Button>
-              </TableCell>
-            </TableRow>
-          ))}
+          {
+            // Show 6 skeleton rows
+            Array.from({ length: 6 }).map((_, index) => (
+              <TableRow key={index}>
+                <TableCell className="pl-4 md:w-[200px]">
+                  <Skeleton className="h-4 w-36" />
+                </TableCell>
+                <TableCell>
+                  <Skeleton className="h-4 w-48" />
+                </TableCell>
+                <TableCell>
+                  <Skeleton className="h-4 w-36" />
+                </TableCell>
+                <TableCell>
+                  <Skeleton className="h-4 w-36" />
+                </TableCell>
+                <TableCell className="w-[100px]">
+                  <Skeleton className="h-4 w-20" />
+                </TableCell>
+              </TableRow>
+            ))
+          }
         </TableBody>
       </Table>
     </div>
   );
-}
+};

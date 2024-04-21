@@ -2,10 +2,13 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { useMemo, useEffect, useState } from "react";
+import { toast } from "sonner";
+import { customRevalidatePath } from "@/utils/customRevalidatePath";
+import { Transaction } from "@prisma/client";
+import { useSession } from "next-auth/react";
 
 // FORM COMPONENTS
-import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
 import {
   Form,
   FormControl,
@@ -14,7 +17,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import {
   Popover,
   PopoverContent,
@@ -27,17 +29,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
+import { CalendarIcon } from "@radix-ui/react-icons";
+import { format } from "date-fns";
+import { cn } from "@/lib/utils";
 import {
   EXPENSE_CATEGORIES,
   EXPENSE_CATEGORIES_KEYS,
   INCOME_CATEGORIES,
   INCOME_CATEGORIES_KEYS,
 } from "@/lib/categories";
-import { cn } from "@/lib/utils";
-import { CalendarIcon } from "@radix-ui/react-icons";
-import { format } from "date-fns";
-import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Calendar } from "@/components/ui/calendar";
+import { Textarea } from "@/components/ui/textarea";
+import { createTransaction } from "@/lib/api/transactions";
+import { getAllUserAccountsByUserId } from "@/lib/api/accounts";
 
 const formSchema = z.object({
   account: z.string().min(1),
@@ -49,32 +55,93 @@ const formSchema = z.object({
   notes: z.string().optional(),
 });
 
-export default function TransactionForm() {
+export default function TransactionForm({
+  initialData,
+  closeSheetCallback,
+}: {
+  initialData: Transaction | undefined;
+  closeSheetCallback: () => void;
+}) {
+  const { data: session } = useSession();
+  const userId = session?.user?.id;
+
+  const [accounts, setAccounts] = useState<any[]>([]);
+  const [defaultAccount, setDefaultAccount] = useState<any | null>(null);
   const [showCalendar, setShowCalendar] = useState(false);
   const [type, setType] = useState<"expense" | "income">("expense");
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      account: "", //TODO: Replace with actual account id in DB
-      type: "expense",
-      category: "",
-      description: "",
-      date: new Date(),
-      amount: 0,
-      notes: "",
-    },
+    defaultValues: useMemo(
+      () => ({
+        account: initialData?.UserAccountId || "",
+        type: initialData?.type || "expense",
+        category: initialData?.category || "",
+        description: initialData?.description || "",
+        date: new Date(),
+        amount: initialData?.amount || 0,
+        notes: initialData?.notes || "",
+      }),
+      [initialData, defaultAccount],
+    ),
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    alert(JSON.stringify(values, null, 2));
+  // Fetch all accounts and set form account option to default account
+  useEffect(() => {
+    if (userId) {
+      const fetchAccountsAndDefaultAccount = async () => {
+        try {
+          const fetchedAccounts = await getAllUserAccountsByUserId(userId);
+          setAccounts(fetchedAccounts);
+
+          const defaultAcc = fetchedAccounts.find(
+            (account) => account.isDefault === true,
+          );
+          setDefaultAccount(defaultAcc || null);
+
+          // Update form account value to defaultAccount.id
+          form.setValue("account", defaultAcc?.id ?? "");
+        } catch (error) {
+          console.error("Error fetching accounts:", error);
+        }
+      };
+
+      fetchAccountsAndDefaultAccount();
+    }
+  }, [userId, form, setAccounts, setDefaultAccount]);
+
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    try {
+      const response = await createTransaction({
+        UserAccountId: values.account,
+        type: values.type,
+        description: values.description,
+        category: values.category,
+        date: values.date,
+        amount: values.amount,
+        notes: values.notes,
+      });
+      if (response.success) {
+        toast.success("Transaction created successfully");
+        customRevalidatePath("/transactions");
+        closeSheetCallback();
+      } else if (response.error) {
+        toast.error(response.error);
+      } else {
+        toast.error("Failed to create transaction!");
+      }
+    } catch (error) {
+      console.error("Error submitting transaction:", error);
+    }
   }
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="space-y-8"
+        noValidate
+      >
         <div className="space-y-6">
           <div className="flex w-full gap-2">
             <Button
@@ -88,6 +155,7 @@ export default function TransactionForm() {
             >
               Expense
             </Button>
+
             <Button
               type="button"
               className="w-full"
@@ -111,7 +179,11 @@ export default function TransactionForm() {
                 </FormLabel>
                 <FormControl>
                   <Input
-                    placeholder="Netflix"
+                    placeholder={
+                      type === "expense"
+                        ? "e.g. Groceries, Rent, etc."
+                        : "e.g. Salary, Bonus, etc."
+                    }
                     {...field}
                     autoComplete="false"
                   />
@@ -121,69 +193,44 @@ export default function TransactionForm() {
             )}
           />
 
-          {type === "expense" && (
-            <FormField
-              control={form.control}
-              name="category"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="font-medium text-primary">
-                    Category
-                  </FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a category" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {EXPENSE_CATEGORIES_KEYS.map((category) => (
-                        <SelectItem key={category} value={category}>
-                          {EXPENSE_CATEGORIES[category]}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          )}
-
-          {type === "income" && (
-            <FormField
-              control={form.control}
-              name="category"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="font-medium text-primary">
-                    Category
-                  </FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a category" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {INCOME_CATEGORIES_KEYS.map((category) => (
-                        <SelectItem key={category} value={category}>
-                          {INCOME_CATEGORIES[category]}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          )}
+          {/* {(type === "expense" || type === "income") && ( */}
+          <FormField
+            control={form.control}
+            name="category"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="font-medium text-primary">
+                  Category
+                </FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a category" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {(type === "expense"
+                      ? EXPENSE_CATEGORIES_KEYS
+                      : INCOME_CATEGORIES_KEYS
+                    ).map((category) => (
+                      <SelectItem key={category} value={category}>
+                        {
+                          (type === "expense"
+                            ? EXPENSE_CATEGORIES
+                            : INCOME_CATEGORIES)[category]
+                        }
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          {/* )} */}
 
           <FormField
             control={form.control}
@@ -232,6 +279,41 @@ export default function TransactionForm() {
 
           <FormField
             control={form.control}
+            name="account"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="font-medium text-primary">
+                  Account
+                </FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  value={
+                    field.value || (defaultAccount ? defaultAccount.id : "")
+                  }
+                  defaultValue={
+                    defaultAccount ? defaultAccount.name : field.value
+                  }
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select an account" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {accounts.map((account) => (
+                      <SelectItem key={account.id} value={account.id}>
+                        {account.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
             name="amount"
             render={({ field }) => (
               <FormItem>
@@ -245,8 +327,8 @@ export default function TransactionForm() {
                     </span>
                     <Input
                       type="number"
-                      pattern="[0-9]*"
-                      placeholder="0.00"
+                      pattern="[0-9]*\.?[0-9]+"
+                      placeholder="Enter amount"
                       className="ps-8"
                       {...field}
                       onChange={(e) => {
