@@ -16,7 +16,6 @@ import { getAllUserAccountsByUserId } from "@/lib/api/accounts";
 import { getAllTransactionsByUserId } from "@/lib/api/transactions";
 
 // PACKAGES
-import { FileUpIcon } from "lucide-react";
 import Image from "next/image";
 import { Suspense } from "react";
 
@@ -59,7 +58,7 @@ export default async function TransactionsPage() {
           <EmptyPlaceholder>
             <div className="relative h-[160px] w-[160px]">
               <Image
-                src="/pig.png"
+                src="/images/pig.png"
                 fill
                 alt=""
                 unoptimized
@@ -82,7 +81,7 @@ export default async function TransactionsPage() {
           <EmptyPlaceholder>
             <div className="relative h-[160px] w-[160px]">
               <Image
-                src="/transaction.png"
+                src="/images/transaction.png"
                 fill
                 alt=""
                 unoptimized

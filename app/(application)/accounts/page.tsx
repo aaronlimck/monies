@@ -1,8 +1,5 @@
 import MainNavTabs from "@/components/navigation/MainNavTabs";
 import Navbar from "@/components/navigation/Navbar";
-import { Button } from "@/components/ui/button";
-import { PlusIcon } from "lucide-react";
-import AccountSheet from "./_components/AccountSheet";
 import AccountsTable from "./_components/AccountTable";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
@@ -35,7 +32,7 @@ export default async function AccountsPage() {
         {/* Show no accounts message if user has no accounts */}
         {numberOfAccounts === 0 && (
           <EmptyPlaceholder>
-            <Image src="/pig.png" width={160} height={160} alt="" />
+            <Image src="/images/pig.png" width={160} height={160} alt="" />
             <EmptyPlaceholder.Title>No accounts created</EmptyPlaceholder.Title>
             <EmptyPlaceholder.Description>
               Oops! Looks like you have not created an account.

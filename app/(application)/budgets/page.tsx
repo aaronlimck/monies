@@ -16,7 +16,7 @@ export default function BudgetsPage() {
 
         <EmptyPlaceholder>
           <Image
-            src="/maintenance.png"
+            src="/images/maintenance.png"
             width={160}
             height={160}
             alt="maintenance"
