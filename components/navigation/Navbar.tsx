@@ -6,6 +6,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { GitHubLogoIcon } from "@radix-ui/react-icons";
 
 export default async function Navbar() {
   const session = await getServerSession(authOptions);
@@ -20,19 +21,42 @@ export default async function Navbar() {
       </div>
 
       {!session && (
-        <Link
-          href="/login"
-          className={cn(
-            buttonVariants({ variant: "ghost" }),
-            "px-0 text-primary/80 hover:bg-transparent",
-          )}
-        >
-          Sign In
-        </Link>
+        <div className="flex items-center gap-4">
+          <Link
+            className={cn(
+              buttonVariants({ variant: "ghost", size: "icon" }),
+              "focus-visible:ring-0 focus-visible:ring-offset-0",
+            )}
+            target="_blank"
+            href="https://github.com/aaronlimck/moolah"
+          >
+            <GitHubLogoIcon className="h-5 w-5" />
+          </Link>
+
+          <Link
+            href="/login"
+            className={cn(
+              buttonVariants({ variant: "ghost" }),
+              "px-0 text-primary/80 hover:bg-transparent",
+            )}
+          >
+            Sign In
+          </Link>
+        </div>
       )}
 
       {session && (
         <div className="flex items-center gap-2">
+          <Link
+            className={cn(
+              buttonVariants({ variant: "ghost", size: "icon" }),
+              "focus-visible:ring-0 focus-visible:ring-offset-0",
+            )}
+            target="_blank"
+            href="https://github.com/aaronlimck/moolah"
+          >
+            <GitHubLogoIcon className="h-5 w-5" />
+          </Link>
           <ThemeToggle />
           <AvatarMenu userProps={session}>
             <Button
