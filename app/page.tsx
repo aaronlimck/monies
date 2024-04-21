@@ -30,7 +30,10 @@ export default function Home() {
         </p>
 
         <div className="flex w-full items-center justify-center space-x-4 py-4 md:pb-10">
-          <Button variant="outline" className="font-normal">
+          <Button
+            variant="outline"
+            className="font-normal text-muted-foreground"
+          >
             Join Waitlist
           </Button>
         </div>
@@ -102,11 +105,18 @@ export default function Home() {
 
           <div className="mb-12 w-full lg:mb-0 lg:ml-16">
             <Image
-              className="top-0 mx-auto rounded-xl border dark:border-white/10 lg:absolute"
-              src="/images/transactions_screenshot.png"
+              className="top-0 mx-auto block rounded-xl border dark:hidden dark:border-white/10 lg:absolute"
+              src="/images/transactions_screenshot_light.png"
               width={800}
               height={600}
-              alt=""
+              alt="transactions_ui_screenshot"
+            />
+            <Image
+              className="top-0 mx-auto hidden rounded-xl border dark:block dark:border-white/10 lg:absolute"
+              src="/images/transactions_screenshot_dark.png"
+              width={800}
+              height={600}
+              alt="transactions_ui_screenshot"
             />
             {/* <div className="rounded-xl border border-white/10"></div> */}
           </div>
