@@ -62,7 +62,7 @@ export default function TransactionDetailSheet({
   return (
     <Sheet open={showTransactionDetail} onOpenChange={setShowTransactionDetail}>
       {children && <SheetTrigger>{children}</SheetTrigger>}
-      <SheetContent className="w-full sm:max-w-none md:max-w-md">
+      <SheetContent className="w-full overflow-y-auto sm:max-w-none md:max-w-md">
         <div className="space-y-6">
           <div className="mt-4 flex items-center justify-between">
             <SheetHeader className="text-left">

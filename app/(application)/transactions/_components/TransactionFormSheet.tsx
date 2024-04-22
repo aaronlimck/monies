@@ -24,16 +24,18 @@ export default function TransactionFormSheet({
 }: TransactionSheetProps) {
   return (
     <Sheet open={open} onOpenChange={setOpen}>
-      <SheetContent className="w-full sm:max-w-none md:max-w-md">
+      <SheetContent className="w-full overflow-y-auto sm:max-w-none md:max-w-md">
         <div className="space-y-6">
           <SheetHeader className="text-left">
             <SheetTitle className="font-medium">{title}</SheetTitle>
           </SheetHeader>
 
-          <TransactionForm
-            initialData={initialData}
-            closeSheetCallback={() => setOpen(false)}
-          />
+          <div>
+            <TransactionForm
+              initialData={initialData}
+              closeSheetCallback={() => setOpen(false)}
+            />
+          </div>
         </div>
       </SheetContent>
     </Sheet>

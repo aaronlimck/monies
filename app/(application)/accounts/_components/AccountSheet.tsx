@@ -21,7 +21,7 @@ export default function AccountSheet({
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>{children}</SheetTrigger>
-      <SheetContent className="w-full sm:max-w-none md:max-w-md">
+      <SheetContent className="w-full overflow-y-auto sm:max-w-none md:max-w-md">
         <div className="space-y-6">
           <SheetHeader>
             <SheetTitle className="font-medium">{title}</SheetTitle>
