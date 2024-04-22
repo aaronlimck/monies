@@ -18,7 +18,7 @@ import { signIn } from "next-auth/react";
 import { useState } from "react";
 import { LoaderCircleIcon } from "lucide-react";
 import { toast } from "sonner";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { DEFAULT_LOGIN_REDIRECT } from "@/lib/routes";
 
 const formSchema = z.object({
@@ -26,11 +26,12 @@ const formSchema = z.object({
   password: z.string().min(1),
 });
 
-export default function LoginForm() {
+export default function LoginForm({
+  callbackUrl = DEFAULT_LOGIN_REDIRECT,
+}: {
+  callbackUrl: string;
+}) {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get("callbackUrl") || DEFAULT_LOGIN_REDIRECT; // If no callbackUrl is provided, redirect to the default login redirect
-
   const [loading, setLoading] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
