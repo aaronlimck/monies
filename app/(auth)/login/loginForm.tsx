@@ -15,6 +15,11 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { signIn } from "next-auth/react";
+import { useState } from "react";
+import { LoaderCircleIcon } from "lucide-react";
+import { toast } from "sonner";
+import { useRouter, useSearchParams } from "next/navigation";
+import { DEFAULT_LOGIN_REDIRECT } from "@/lib/routes";
 
 const formSchema = z.object({
   email: z.string().email(),
@@ -22,6 +27,12 @@ const formSchema = z.object({
 });
 
 export default function LoginForm() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get("callbackUrl") || DEFAULT_LOGIN_REDIRECT; // If no callbackUrl is provided, redirect to the default login redirect
+
+  const [loading, setLoading] = useState(false);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -31,11 +42,29 @@ export default function LoginForm() {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    // alert(JSON.stringify(values, null, 2));
-    await signIn("credentials", {
-      email: values.email,
-      password: values.password,
-    });
+    try {
+      setLoading(true);
+      const response = await signIn("credentials", {
+        email: values.email,
+        password: values.password,
+        redirect: false,
+      });
+
+      if (response) {
+        if (response.error === null && response.ok === true) {
+          router.replace(
+            callbackUrl.length > 0 ? callbackUrl : DEFAULT_LOGIN_REDIRECT,
+          );
+        }
+        if (response.error === "CredentialsSignin" && response.ok === false) {
+          toast.error("Invalid credentials");
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -85,7 +114,8 @@ export default function LoginForm() {
         </div>
 
         <Button type="submit" className="h-10 w-full font-medium">
-          Sign In
+          {loading && <LoaderCircleIcon size={16} className="animate-spin" />}
+          {!loading && <span>Sign In</span>}
         </Button>
       </form>
     </Form>
